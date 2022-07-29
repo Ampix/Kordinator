@@ -1,27 +1,23 @@
 const express = require("express");
+const nodemon = require("nodemon");
+const bodyParser = require("body-parser");
 const path = require("path");
-var mysql = require('mysql');
+const fs = require('fs');
 const app = express();
 const port = 5500;
+const sqlite3 = require('sqlite3').verbose();
+let sql;
+let routes = [];
+const db = new sqlite3.Database('./kord.sqlite', sqlite3.OPEN_READWRITE, (err) => {
+  if (err) return console.error(err.message);
+});
 
-var con = mysql.createConnection({
-      host: "79.139.61.25",
-      user: "realcast_kordi",
-      password: "kecske.kecske",
-      database: "realcast_kordinator"
-    });
-    
-    con.connect(function(err) {
-      if (err) throw err;
-      console.log("Connected!");
-      var sql = "INSERT INTO lines (name, stations) VALUES ('8E', 'asd')";
-      con.query(sql, function (err, result) {
-            if (err) throw err;
-            console.log("1 record inserted");
-          });
-        
-    });
-    
+sql = `INSERT INTO routes(name,last) VALUES ('harcsi', 3)`
+
+//db.run(sql)
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.set("view engine", 'ejs')
 app.set("views", "oldalak")
@@ -34,4 +30,4 @@ const cord = require('./scripts/kord')
 app.use('/kord', cord)
 
 app.listen(port);
-console.log("Fut")
+console.log("localhost:"+port)

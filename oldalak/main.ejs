@@ -6,13 +6,18 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>AmpixKordinátor</title>
       <link href="\style.css" rel="stylesheet">
+      <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-      <h1 id="route"><%= title %></h1>
-      <button onclick="nextstat()">Következő állomás</button>
-      <button onclick="here()">Itt vagyunk</button>
+      <div class="routebg bg-gray-900">
+            <div class="bg-cyan-400 routeplace">
+                  <h1 id="route"><%= title %></h1>
+                  <p id="routename" class="hide"><%= routename %></p>
+                  <p id="last" class="hide"><%= laststat %></p>
+            </div>
+      </div>
       <ul class="stations" id="vonalak">
-            <li id="0">Betöltés...</li>
+            <li id="teszt" class="bg-slate-800 hide">Betöltés...</li>
       </ul>
       <script src="\script.js"></script>
 </body>
