@@ -25,4 +25,4 @@ const cord = require('./scripts/kord')
 app.use('/kord', cord)
 
 app.listen(port);
-console.log("localhost:"+port)
+console.log("http://localhost:"+port)

@@ -3,18 +3,28 @@ const router = express.Router()
 const bodyParser = require("body-parser");
 let asd;
 const mysql = require('mysql2');
-const WebSocket = require("ws")
-const server = new WebSocket.Server({port: '8080'})
+//const WebSocket = require("ws")
+//const server = new WebSocket.Server({port: '8080'})
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
-server.on('connection', socket => {
+const httpServer = createServer();
+const io = new Server(httpServer, { cors: {origin: ['http://localhost:5500']} });
+
+
+io.on('connection', socket => {
       refresh(false)
-      socket.send(routelast[asd])
-      socket.on('message', message => {
-            if(message == "refresh"){
-                  socket.send(routelast[asd])
-            }
+      setTimeout(() => {
+            while(routelast[asd] == null){}
+            io.emit('getstat', routelast[asd])  
+      }, 100);
+      socket.on('refresh', () => {
+            while(routelast[asd] == null){}
+            io.emit('getstat', routelast[asd])
       })
 })
+
+
 
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
@@ -95,5 +105,6 @@ router.get('/:id/:route', async(req, res) =>{
             res.render("main", { title: route, routename: id})
       },100)
 })
+httpServer.listen(3000);
 
 module.exports = router

@@ -7,10 +7,11 @@
       <title>AmpixKordinátor</title>
       <link href="\style.css" rel="stylesheet">
       <script src="https://cdn.tailwindcss.com"></script>
+      <script src="https://cdn.socket.io/4.5.0/socket.io.min.js" integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k" crossorigin="anonymous"></script>
 </head>
 <body>
       <div class="routebg bg-gray-900">
-            <div class="bg-cyan-400 routeplace">
+            <div class="routeplace" id="routeplace">
                   <h1 id="route"><%= title %></h1>
                   <p id="routename" class="hide"><%= routename %></p>
             </div>

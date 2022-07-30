@@ -1,24 +1,32 @@
 let állomások = []
 let lastlaststat = 0;
 let first = true;
+let statcol;
 
-const socket = new WebSocket('ws://localhost:8080')
+const socket = io("http://localhost:3000");
+//const socket = new WebSocket('ws://localhost:8080')
 
 function currentstat(){
       const stat = document.getElementById("vonalak").firstElementChild.nextElementSibling
-      stat.classList.add("bg-blue-400")
+      stat.classList.add(statcol)
 };
 
-socket.onmessage = ({data}) => {
+socket.on('getstat', message => {
       if(first){
-            build(data)
+            build(message)
+            load()
             first = false
       }else{
-            rebuild(data)
+            rebuild(message)
       }
       setTimeout(() => {
-            socket.send("refresh")
+            socket.emit("refresh")
       }, 1000);
+})
+
+function load(){
+      const node = document.getElementById("routeplace");
+      node.classList.add(statcol)
 }
 
 function build(laststat){
@@ -55,4 +63,9 @@ const routename = document.getElementById("routename").innerHTML
 
 if(route === "8E"){
       állomások = ["Újpalota, Nyírpalota út", "Vásárcsarnok", "Fő tér", "Apolló utca", "Molnár Viktor utca", "Cinkotai út", "Bosnyák tér", "Tisza István tér", "Zugló vasútállomás", "Keleti pályaudvar M"]
+      statcol = "bg-cyan-400"
+}
+if(route === "M3"){
+      állomások = ["Újpest-Központ", "Újpest-Városkapu", "Gyöngyösi utca", "Forgách utca", "Árpád híd", "Dózsa György út", "Lehel tér", "Nyugati pályaudvar", "Arany János utca", "Deák Ferenc tér", "Ferenciek tere", "Kálvin tér", "Ferenc körút", "Semmelweis Klinikák", "Nagyvárad tér", "Népliget", "Ecseri út", "Pöttyös utca", "Határ út", "Kőbánya-Kispest"]
+      statcol = "bg-blue-600"
 }
