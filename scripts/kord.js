@@ -1,50 +1,60 @@
 const express = require("express");
-const exec = require('child_process').exec;
 const router = express.Router()
-const sqlite3 = require('sqlite3').verbose();
 const bodyParser = require("body-parser");
-const fs = require('fs');
 let asd;
-let opened = false;
+const mysql = require('mysql2');
+const WebSocket = require("ws")
+const server = new WebSocket.Server({port: '8080'})
+
+server.on('connection', socket => {
+      refresh(false)
+      socket.send(routelast[asd])
+      socket.on('message', message => {
+            if(message == "refresh"){
+                  socket.send(routelast[asd])
+            }
+      })
+})
 
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
-let sql;
 let routenames = [];
 let routelast = [];
-const db = new sqlite3.Database('./kord.sqlite', sqlite3.OPEN_READWRITE, (err) => {
-  if (err) return console.error(err.message);
-});
+
+const connection = mysql.createConnection({
+      host: '79.139.61.25',
+      user: 'realcast_kordi',
+      password: 'kecske.kecske',
+      database: 'realcast_kordinator'
+    });
 
 function refresh(id){
-      sql = `SELECT * FROM routes`
-      db.all(sql,[], (err,rows) => {
-            if (err) return console.error(err.message)
-            rows.forEach((row) => {
+      connection.query(
+            'SELECT * FROM `routes`',
+            function(err, results) {
+                  if(err) return console.error(err.message)
+              results.forEach((row) => {
                   routenames = []
                   routelast = []
                   routenames.push(row.name)
                   routelast.push(row.last)
-            })
-            for (let i = 0; i < routenames.length; i++) {
+              })
+            if(id){
+
+            
+              for (let i = 0; i < routenames.length; i++) {
                   if(routenames[i] == id){
                         asd = i;
                         break;
                   }
             }
-      })
+      }
+            }
+          );
+          
       
       setTimeout(()=> {refresh(id)},1000)
-}
-
-function savelast(id){
-      let sanyi = routelast[asd]
-            fs.writeFile('assets/saves/routelast-'+ id + '.txt', sanyi.toString(), (err) => {
-                  // throws an error, you could also catch it here
-                  if (err) throw err;
-              });
-              setTimeout(()=> {savelast(id)},1000)
 }
 
 router.get('/', async(req,res) => {
@@ -53,21 +63,26 @@ router.get('/', async(req,res) => {
 
 router.get('/adm/:id', async(req, res) =>{
       id = req.params.id
+      refresh(id)
       setTimeout(() => {
             if(routenames.includes(id) == false) return res.send("Ilyen nincs!")
             res.render("adm", { title: id})
-      },1000)
+      },100)
 })
 
 router.post('/nextstat/:id', (req,res)=> {
       id = req.params.id
-      sql = `UPDATE routes SET last = ? WHERE name = ?`
-      gazdi = routelast[asd]
+      refresh(id)
       setTimeout(() => {
-            db.run(sql, [gazdi+1,id], (err) => {
-                  if(err) return console.error(err.message)
-            })
-      }, 500);
+            gazdi = routelast[asd]
+            connection.query(
+                  'UPDATE routes SET last = ? WHERE name = ?',
+                  [gazdi+1, id],
+                  function(err, results) {
+                        if(err) return console.error(err.message)
+                  }
+                ); 
+      }, 100);
       
 })
 
@@ -77,10 +92,8 @@ router.get('/:id/:route', async(req, res) =>{
       refresh(id)
       setTimeout(() => {
             if(routenames.includes(id) == false) return res.send("Ilyen nincs!")
-            
-            
-            savelast(id)
-            res.render("main", { title: route, routename: id,laststat: routelast[asd]})
-      },1000)
+            res.render("main", { title: route, routename: id})
+      },100)
 })
+
 module.exports = router

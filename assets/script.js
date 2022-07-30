@@ -1,17 +1,24 @@
 let állomások = []
-let lastlaststat;
+let lastlaststat = 0;
+let first = true;
+
+const socket = new WebSocket('ws://localhost:8080')
+
 function currentstat(){
       const stat = document.getElementById("vonalak").firstElementChild.nextElementSibling
       stat.classList.add("bg-blue-400")
 };
 
-async function refresh(){
-      fetch('http://localhost:5500/saves/routelast-'+ routename + '.txt')
-            .then(response => response.text())
-            .then((data) => {
-                  rebuild(data)
-            })
-      setTimeout(()=> {refresh()},2000)
+socket.onmessage = ({data}) => {
+      if(first){
+            build(data)
+            first = false
+      }else{
+            rebuild(data)
+      }
+      setTimeout(() => {
+            socket.send("refresh")
+      }, 1000);
 }
 
 function build(laststat){
@@ -45,10 +52,7 @@ function rebuild(laststat){
 
 const route = document.getElementById("route").innerHTML
 const routename = document.getElementById("routename").innerHTML
-const last = document.getElementById("last").innerHTML
 
 if(route === "8E"){
       állomások = ["Újpalota, Nyírpalota út", "Vásárcsarnok", "Fő tér", "Apolló utca", "Molnár Viktor utca", "Cinkotai út", "Bosnyák tér", "Tisza István tér", "Zugló vasútállomás", "Keleti pályaudvar M"]
-      build(last)
-      refresh()
 }

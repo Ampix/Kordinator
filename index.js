@@ -1,20 +1,15 @@
 const express = require("express");
-const nodemon = require("nodemon");
 const bodyParser = require("body-parser");
-const path = require("path");
-const fs = require('fs');
 const app = express();
 const port = 5500;
-const sqlite3 = require('sqlite3').verbose();
-let sql;
-let routes = [];
-const db = new sqlite3.Database('./kord.sqlite', sqlite3.OPEN_READWRITE, (err) => {
-  if (err) return console.error(err.message);
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  host: '79.139.61.25',
+  user: 'realcast_kordi',
+  password: 'kecske.kecske',
+  database: 'realcast_kordinator'
 });
-
-sql = `INSERT INTO routes(name,last) VALUES ('harcsi', 3)`
-
-//db.run(sql)
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
