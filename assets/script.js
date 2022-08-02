@@ -12,16 +12,32 @@ function currentstat(){
 };
 
 socket.on('getstat', message => {
-      if(first){
-            build(message)
-            load()
-            first = false
-      }else{
-            rebuild(message)
-      }
+            if(first){
+                  build(message)
+                  load()
+                  first = false
+            }else if(lastlaststat != message){
+                  rebuild(message)
+            }
+            setTimeout(() => {
+                  socket.emit("refresh")
+            }, 1000);
+      
+})
+
+socket.on('plays', type => {
       setTimeout(() => {
-            socket.emit("refresh")
-      }, 1000);
+            if(type == "normal"){
+                  console.log(`Play http://localhost:5500/sounds/${route}/${lastlaststat}.wav`)
+                  var audio = new Audio(`http://localhost:5500/sounds/${route}/${lastlaststat}.wav`);
+                  audio.play();
+            }
+            if(type == "go"){
+                  console.log(`Play http://localhost:5500/sounds/${route}/${lastlaststat}-go.wav`)
+                  var audio = new Audio(`http://localhost:5500/sounds/${route}/${lastlaststat}-go.wav`);
+                  audio.play();
+            }
+      }, 1000);  
 })
 
 function load(){

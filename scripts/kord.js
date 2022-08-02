@@ -22,7 +22,12 @@ io.on('connection', socket => {
             while(routelast[asd] == null){}
             io.emit('getstat', routelast[asd])
       })
+      socket.on('plays', message => {
+         io.emit('plays', message)   
+      })
 })
+
+
 
 
 
