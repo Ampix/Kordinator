@@ -5,8 +5,8 @@ const port = 5500;
 const mysql = require('mysql2');
 
 const connection = mysql.createConnection({
-  host: '79.139.61.25',
-  user: 'realcast_kordi',
+  host: '130.61.120.32',
+  user: 'kordi',
   password: 'kecske.kecske',
   database: 'realcast_kordinator'
 });
