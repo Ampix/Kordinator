@@ -1,6 +1,6 @@
 let active: {name?:string,route?:string,next?:number,status?:"station"|"going",dest?:boolean}[] = []
 
-Bun.serve({
+const server = Bun.serve({
     port: 3000,
     development: true,
     async fetch(req) {
@@ -20,3 +20,5 @@ Bun.serve({
         },
     }
 })
+
+console.log("http://localhost:"+server.port);
