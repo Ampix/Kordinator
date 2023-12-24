@@ -1,4 +1,11 @@
 let active: {name?:string,route?:string,next?:number,status?:"station"|"going",dest?:boolean}[] = []
+import "./src/scripts/index"
+
+await Bun.build({
+    entrypoints: ['./src/scripts/index.ts'],
+    
+    outdir: "./public/scripts"
+})
 
 const server = Bun.serve({
     port: 3000,
@@ -9,6 +16,14 @@ const server = Bun.serve({
             return new Response(Bun.file("public/output.css"))
         }else if(url.pathname === "/"){
             return new Response(Bun.file("src/index.html"))
+        }else if(url.pathname === "/about"){
+            return new Response(Bun.file("src/about.html"))
+        }else if(url.pathname.startsWith("/js")){
+            return new Response(Bun.file("public/scripts" + url.pathname.split("js")[1] + ".js"))
+        }else if(url.pathname === "/ws") {
+            if(server.upgrade(req)){
+                return
+            }
         }else{
             return new Response(Bun.file("src/404.html"))
         }

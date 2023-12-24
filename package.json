@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "run-p dev:ts dev:tailwind",
-    "dev:ts": "bun run --hot index.ts",
+    "dev:ts": "bun run --watch index.ts",
     "dev:tailwind": "bunx tailwindcss -i ./public/main.css -o ./public/output.css --watch"
   },
   "peerDependencies": {
